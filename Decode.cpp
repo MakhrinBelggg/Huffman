@@ -92,7 +92,7 @@ struct check
 	}
 };
 
-int fileSize(string fileName)
+long int fileSize(string fileName)
 {
 	ifstream file(fileName, ios_base::binary);  // читаем файл в двоичном виде
 	file.seekg(0, ios_base::end);
@@ -109,7 +109,7 @@ void deleteLastByte(string fileName)
 
 	string content = buffer.str();
 	file.close();
-	content.pop_back(); // удаляем последний 0
+	if (!content.empty()) content.pop_back(); // удаляем последний 0
 
 	ofstream _file(fileName, ios::trunc); // перезаписываем без нуля в конце
 	_file << content;
@@ -120,22 +120,48 @@ map<char, int> treeCreater() // созадем мапу из файла-шапки
 {
 	map<char, int> tab;
 	int number, _key;
-	treeFile >> number; //считываем первое число из tree.txt в number (кол-во пар)
+	treeFile >> number; //считываем первое число из tree.txt в number (кол-во пар, разных символов)
 	cout << "pairs number = " << number << endl;
 
 	char _ch;
 	while (number != 0)
 	{
 		treeFile.read(&_ch, sizeof(_ch)); //читаем посимвольно в ch
+		/*if (_ch > 47 && _ch < 58)
+		{
+
+		}
+		else */
 		treeFile >> _key;
-		if (_ch == 13) _ch = 10;  // перенос строки равно пробел
+		if (_ch == 13 || _ch == 10) _ch = 10;  // /r в /n
+		
 		tab[_ch] = _key; // заносим пару символ - количество
+		
 		cout << "tab[" << _ch << "] = " << _key << endl;
 		number--;
 	}
 	return tab;
 }
 
+bool testYourLuck(string originalFile, string otherFile)
+{
+	if (fileSize(originalFile) != fileSize(otherFile)) return 0;
+
+	ifstream file1(originalFile, ios::in | ios::binary);
+	if (!file1.is_open()) return 0;
+
+	ifstream file2(otherFile, ios::in | ios::binary);
+	if (!file2.is_open()) return 0;
+	
+	char ch1, ch2;
+	while (!file1.eof())
+	{
+		file1 >> ch1;
+		file2 >> ch2;
+		if (ch1 != ch2) return 0;
+	}
+	return 1;
+}
 int main()
 {
 	map<char, int> tab = treeCreater(); // вызываем функцию, которая возвращает мапу
@@ -150,7 +176,7 @@ int main()
 			tmp->key = ix->second;
 			tree.push_back(tmp); // добавляем узел в конец списка
 		}
-		if (_ch == 10)
+		else if (_ch == 10)
 		{
 			Node *tmp = new Node;
 			tmp->ch = '\n';
@@ -181,19 +207,23 @@ int main()
 
 	bool test = root->unzip();
 
+	cout << endl;
 	if (!test)
 	{
 		cout << "Couldn't open file " << compressed << endl;
-		return 0;
+		return 12;
 	}
-	cout << "size of file must be " << sizeOfFile - 1 << " bytes" << endl; 
+	cout << "size of file must be " << sizeOfFile << " bytes" << endl; 
 	long fS = fileSize(uncompressed); // размер нового файла
-	while (fS > sizeOfFile - 2) // удаляем фиктивные нули пока размер нового файла не совпадет с оригиналом
+	while (fS > sizeOfFile)  // удаляем фиктивные нули пока размер нового файла не совпадет с оригиналом
 	{
-		cout << "current file size = " << fS << endl;
 		deleteLastByte(uncompressed);
 		fS = fileSize(uncompressed);
-	}
-	cout << "File " << compressed << " was decompressed and rewritten to file uncomressedText.txt" << endl;
+		cout << "current file size = " << fS << endl;
+	} 
+	cout << "File " << compressed << " was decompressed and rewritten to file uncomressedText.txt" << endl << endl;
+	if (testYourLuck("originalText.txt", uncompressed)) cout << "JOB HAS DONE" << endl;
+	else cout << "Comparing of texts failed" << endl;
+
 	return 0;
 }

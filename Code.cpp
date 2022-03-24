@@ -68,16 +68,16 @@ public:
 			{
 				vector<bool> res = trueTab[_ch]; // берем кодировку символа ch, кладем в вектор рес
 
-				for (int j = 0; j < (int) res.size(); ++j) //этап 4 преобразуем  кодировки в символы
+				for (int j = 0; j < (int)res.size(); ++j) //этап 4 преобразуем  кодировки в символы
 				{
-					buff |= (res[j] << (7 - counter)); 
-					++counter;
+					buff |= (res[j] << (7 - counter));
+					counter++;
 					if (counter == 8)
 					{
 						counter ^= counter; // обнуляем
 						output << buff; // заносим букву в компрессированный файл
 						buff ^= buff;   // обнуляем
-						
+
 					}
 				}
 			}
@@ -95,17 +95,17 @@ public:
 	}
 };
 
-int fileSize(string fileName)
+long int fileSize(string fileName)
 {
 	ifstream inputFile;
-	inputFile.open(fileName, ios_base::binary); 
+	inputFile.open(fileName, ios_base::binary);
 	inputFile.seekg(0, ios_base::end); // пройтись до конца 
-	int size = (int)inputFile.tellg(); // указать сколько прошли, размер файла в байтах
+	long int size = (int)inputFile.tellg(); // указать сколько прошли, размер файла в байтах
 	inputFile.close();
 	return size;
 }
 
-struct check
+struct check // структура, которая помогает сравнивать диапозон
 {
 	bool operator() (const Node *l, const Node *r) const
 	{
@@ -124,18 +124,17 @@ int main()
 		inputFile.read(&_ch, sizeof(_ch)); // считываем строку посимвольно в ch
 		if (_ch > 31 && _ch < 127)
 		{
-			if (tab.find(_ch) == tab.end()) 
-				tab[_ch] = 0; // !! если такой пары еще нет, добавляем
-
+			if (tab.find(_ch) == tab.end())
+				tab[_ch] = 0;
 			tab[_ch]++;
 		}
-		if (_ch = 13) 
+		else if (_ch == 13 || _ch == 10)
 		{
 			if (tab.find(_ch) == tab.end())
-				tab[_ch] = 0; // !! если такой пары еще нет, добавляем
-
+				tab[10] = 0;
 			tab[10]++; // \n 
 		}
+		
 	}
 	treeFile << tab.size(); // заносим в tree.txt кол-во различных символов (пар в мапе)
 
@@ -187,3 +186,7 @@ int main()
 	cout << "File " << fileName << " was compressed and rewritten to file " << compressed << endl;
 	return 0;
 }
+
+// ШАПКА Tree.txt
+// первое число - кол-во различных символов
+// далее символцифра - символ и его количество повторений
