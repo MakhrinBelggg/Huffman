@@ -165,12 +165,12 @@ int main()
 	while (tree.size() != 1)
 	{
 		tree.sort(check());
-		Node *l = tree.front(); // ссылка на 1 элемент
-		tree.pop_front(); // удаляем 1 элемент
+		Node *l = tree.front(); // ссылка на элемент
+		tree.pop_front(); // удаляем элемент
 		Node *r = tree.front();
 		tree.pop_front();
-		Node *batya = new Node(l, r);
-		tree.push_back(batya); // добавить в конец
+		Node *root = new Node(l, r); // дерево
+		tree.push_back(root); // добавить в конец
 	}
 	Node *root = tree.front(); // ссылка на 1 элемент
 	root->tabCreater(); // проходим по дереву составляем таблицу кодировки
@@ -182,8 +182,8 @@ int main()
 	if (!test)
 	{
 		cout << "Couldn't open file " << fileName << endl;
-		return 666;
+		return 0;
 	}
 	cout << "File " << fileName << " was compressed and rewritten to file " << compressed << endl;
-	return 777;
+	return 0;
 }
