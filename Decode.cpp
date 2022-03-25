@@ -61,12 +61,12 @@ public:
 			{
 				if (tmp->ch != 10)
 				{
-					cout << noskipws << tmp->ch;
+					//cout << noskipws << tmp->ch;
 					decompressedFile << noskipws << tmp->ch; // пишем символ
 				}
 				else
 				{
-					cout << noskipws << "\r\n";
+					//cout << noskipws << "\r\n";
 					decompressedFile << noskipws << "\r\n"; // переносим бегунок на новую строку и записываем символ переноса строки
 				}
 				tmp = this;
@@ -96,7 +96,7 @@ long int fileSize(string fileName)
 {
 	ifstream file(fileName, ios_base::binary);  // читаем файл в двоичном виде
 	file.seekg(0, ios_base::end);
-	int size = file.tellg();
+	int size = (int)file.tellg();
 	file.close();
 	return size;
 }
@@ -123,20 +123,20 @@ map<char, int> treeCreater() // созадем мапу из файла-шапки
 	treeFile >> number; //считываем первое число из tree.txt в number (кол-во пар, разных символов)
 	cout << "pairs number = " << number << endl;
 
-	char _ch;
+	char _ch, space;
 	while (number != 0)
 	{
 		treeFile.read(&_ch, sizeof(_ch)); //читаем посимвольно в ch
-		/*if (_ch > 47 && _ch < 58)
-		{
 
-		}
-		else */
+		treeFile.read(&space, sizeof(space));
+
 		treeFile >> _key;
 		if (_ch == 13 || _ch == 10) _ch = 10;  // /r в /n
 		
 		tab[_ch] = _key; // заносим пару символ - количество
-		
+
+		treeFile.read(&space, sizeof(space));
+
 		cout << "tab[" << _ch << "] = " << _key << endl;
 		number--;
 	}

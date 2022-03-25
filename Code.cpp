@@ -140,25 +140,48 @@ int main()
 
 	list<Node*> tree; // создаем двусвязный список 
 
+	int i = 0;
 	for (auto ix = tab.begin(); ix != tab.end(); ix++)
 	{
+		
 		Node *tmp = new Node; // создаем вершину/узел
 		char _ch = ix->first;  // берем букву из пары в мапе
+		if (!i)
+		{
+			if (_ch != 10) // если не /n
+			{
+				tmp->ch = ix->first; // заносим значение в узел 
+				tmp->key = ix->second; // ключ
+				treeFile << tmp->ch << " " << tmp->key; // заносим в tree.txt символ и ключ
+				tree.push_back(tmp); // добавляем в конец дерева текущий узел
+			}
+			else
+			{
+				tmp->ch = '\n';
+				tmp->key = ix->second;
+				treeFile << '\r' << " " << tmp->key;
+				tree.push_back(tmp);
+			}
+			cout << noskipws << *tmp << endl;
+			i++;
+			continue;
+		}
 		if (_ch != 10) // если не /n
 		{
 			tmp->ch = ix->first; // заносим значение в узел 
 			tmp->key = ix->second; // ключ
-			treeFile << tmp->ch << tmp->key; // заносим в tree.txt символ и ключ
+			treeFile << " " << tmp->ch << " " << tmp->key; // заносим в tree.txt символ и ключ
 			tree.push_back(tmp); // добавляем в конец дерева текущий узел
 		}
 		else
 		{
 			tmp->ch = '\n';
 			tmp->key = ix->second;
-			treeFile << '\r' << tmp->key;
+			treeFile <<" " << '\r' << " " << tmp->key;
 			tree.push_back(tmp);
 		}
 		cout << noskipws << *tmp << endl;
+		
 	}
 	// каждый эл массива явл указателем на Node
 	while (tree.size() != 1)
@@ -176,7 +199,7 @@ int main()
 	inputFile.close(); // закрываем файл
 
 	int test = root->zip(fileName); // файл compressedText
-	treeFile << "fileSizeIs" << fileSize(fileName); // заносим в tree.txt размер исходного файла
+	treeFile << " " << "fileSizeIs" << fileSize(fileName); // заносим в tree.txt размер исходного файла
 	treeFile.close();
 	if (!test)
 	{
@@ -189,4 +212,5 @@ int main()
 
 // ШАПКА Tree.txt
 // первое число - кол-во различных символов
-// далее символцифра - символ и его количество повторений
+// далее [ символ ] число - символ и количество его повторений
+// в конце sizeOfFile и количество символов
